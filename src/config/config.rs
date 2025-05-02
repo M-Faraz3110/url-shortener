@@ -33,7 +33,7 @@ impl Config {
             jwt_private_key: env::var("JWT_PRIVATE_KEY")?,
 
             service_host: env::var("SERVICE_HOST")?,
-            service_port: env::var("SERVICE_PORT")?, // Default to 50MB
+            service_port: env::var("SERVICE_PORT")?,
         })
     }
 }

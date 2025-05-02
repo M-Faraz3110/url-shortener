@@ -16,20 +16,6 @@ pub async fn setup_database(config: &Config) -> Result<Pool<Postgres>, sqlx::Err
     println!("Running migrations...");
     migrate!("./migrations").run(&pool).await?;
     println!("Migrations completed");
-    // Create connection options
-    // let connect_options = PgPoolOptions::connect(&config.database_url)
-    //     .map_err(|e| {
-    //         tracing::error!("Failed to parse database URL: {}", e);
-    //         e
-    //     })?
-    //     .charset(&config.database_charset)
-    //     .clone();
-
-    // let pool = PgPoolOptions::new()
-    //     .max_connections(config.database_max_connections)
-    //     .min_connections(config.database_min_connections)
-    //     .connect_with(connect_options)
-    //     .await?;
 
     Ok(pool)
 }

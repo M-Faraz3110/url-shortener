@@ -13,7 +13,6 @@ use super::models::Claims;
 #[derive(Clone)]
 pub struct Auth {
     pub private_key_enc: EncodingKey,
-    //pub private_key_dec: DecodingKey,
 }
 
 impl Auth {
@@ -23,7 +22,6 @@ impl Auth {
             base64::decode(private_key_base64).expect("Failed to decode JWT private key");
         Auth {
             private_key_enc: EncodingKey::from_secret(&private_key),
-            //private_key_dec: DecodingKey::from_secret(&private_key),
         }
     }
 

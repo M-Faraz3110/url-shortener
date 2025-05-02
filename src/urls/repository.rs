@@ -33,7 +33,7 @@ impl UrlRepository for UrlRepo {
             RETURNING id, user_id, url, short_url, deleted, created_at
             "#,
             id,
-            user_id, // user_id is optional, so we bind None
+            user_id,
             url_req,
             short_url,
         )

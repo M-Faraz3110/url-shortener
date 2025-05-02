@@ -30,17 +30,10 @@ pub enum AppError {
     #[error("Validation error: {0}")]
     ValidationError(String),
 
-    /// Used for authentication-related errors
-    #[error("Wrong credentials")]
-    WrongCredentials,
-    #[error("Missing credentials")]
-    MissingCredentials,
     #[error("Invalid token")]
     InvalidToken,
     #[error("Token creation error")]
     TokenCreation,
-    #[error("User not found")]
-    UserNotFound,
 }
 
 impl From<argon2::password_hash::Error> for AppError {
@@ -57,11 +50,8 @@ impl IntoResponse for AppError {
             AppError::PasswordHashingError(_) => StatusCode::INTERNAL_SERVER_ERROR,
             AppError::NotFound(_) => StatusCode::NOT_FOUND,
             AppError::InternalError => StatusCode::INTERNAL_SERVER_ERROR,
-            AppError::WrongCredentials => StatusCode::UNAUTHORIZED,
-            AppError::MissingCredentials => StatusCode::BAD_REQUEST,
             AppError::InvalidToken => StatusCode::UNAUTHORIZED,
             AppError::TokenCreation => StatusCode::INTERNAL_SERVER_ERROR,
-            AppError::UserNotFound => StatusCode::NOT_FOUND,
         };
         let body = axum::Json(ApiResponse::<Option<String>>::failure(
             status.as_u16(),

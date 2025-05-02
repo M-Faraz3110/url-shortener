@@ -13,12 +13,7 @@ use crate::{
 use utoipa_swagger_ui::SwaggerUi;
 
 pub fn create_router(config: &Config, state: AppState) -> Router {
-    //let state = AppState::new();
     let public_routes = Router::new().nest("/users", user_routes());
-    //Router::new().nest("/api/v1", public_routes);
-    //let private_key_base64 = config.jwt_private_key.clone();
-    //let private_key = base64::decode(private_key_base64).expect("Failed to decode JWT private key");
-    //let private_key_dec = DecodingKey::from_secret(&private_key);
 
     let private_routes = Router::new()
         .nest("/urls", url_routes())
