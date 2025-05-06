@@ -16,7 +16,7 @@ pub fn create_router(config: &Config, state: AppState) -> Router {
     let public_routes = Router::new().nest("/users", user_routes());
 
     let private_routes = Router::new()
-        .nest("/urls", url_routes())
+        .merge(url_routes())
         .route_layer(middleware::from_fn(jwt_auth));
 
     Router::new()

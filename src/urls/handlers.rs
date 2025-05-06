@@ -50,10 +50,31 @@ pub async fn delete_url(
     Ok(ApiResponse::success(url))
 }
 
+#[utoipa::path(
+    get,
+    path = "/{code}",
+    responses((status = 302, description = "url redirect")),
+)]
+#[axum::debug_handler]
 pub async fn enter_url(
     State(state): State<AppState>,
-    Path(short_url): Path<String>,
+    Path(code): Path<String>,
 ) -> Result<impl IntoResponse, AppError> {
-    let url = state.url_service.enter_url(&short_url).await?;
+    let url = state.url_service.enter_url(&code).await?;
     Ok(Redirect::permanent(url.url.as_str()))
+}
+
+#[utoipa::path(
+    post,
+    path = "/urls/favourite/{id}",
+    responses((status = 200, description = "url favourited", body = UrlResponse)),
+)]
+#[axum::debug_handler]
+pub async fn toggle_favourite_url(
+    State(state): State<AppState>,
+    Extension(claims): Extension<Claims>,
+    Path(id): Path<String>,
+) -> Result<impl IntoResponse, AppError> {
+    let url = state.url_service.favourite_url(&id).await?;
+    Ok(ApiResponse::success(url))
 }

@@ -1,5 +1,6 @@
 use crate::app_state::AppState;
 use crate::urls::dto::{UrlRequest, UrlResponse};
+use axum::routing::get;
 use axum::{Router, routing::delete, routing::post};
 use utoipa::openapi::security::{HttpAuthScheme, HttpBuilder, SecurityScheme};
 
@@ -39,6 +40,8 @@ impl utoipa::Modify for UrlApiDoc {
 
 pub fn url_routes() -> Router<AppState> {
     Router::new()
-        .route("/shorten", post(handlers::shorten_url))
-        .route("/delete/{id}", delete(handlers::delete_url))
+        .route("/urls/shorten", post(handlers::shorten_url))
+        .route("/urls/delete/{id}", delete(handlers::delete_url))
+        .route("/{code}", get(handlers::enter_url))
+        .route("/urls/favourite/{id}", post(handlers::toggle_favourite_url))
 }

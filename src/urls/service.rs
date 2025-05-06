@@ -55,6 +55,7 @@ impl UrlService {
                     id: url.id.to_string(),
                     url: url.url,
                     short_url: format!("{}/{}", self.prefix, url.short_url),
+                    favourite: url.favourite,
                     deleted: false,
                     created_at: url.created_at.to_string(),
                 });
@@ -72,6 +73,7 @@ impl UrlService {
                     id: url.id.to_string(),
                     url: url.url,
                     short_url: url.short_url,
+                    favourite: url.favourite,
                     deleted: true,
                     created_at: url.created_at.to_string(),
                 });
@@ -87,6 +89,23 @@ impl UrlService {
                     id: url.id.to_string(),
                     url: url.url,
                     short_url: url.short_url,
+                    favourite: url.favourite,
+                    deleted: false,
+                    created_at: url.created_at.to_string(),
+                });
+            }
+            Err(e) => Err(AppError::DatabaseError(e)),
+        }
+    }
+
+    pub async fn favourite_url(&self, id: &String) -> Result<UrlResponse, AppError> {
+        match self.url_repo.favourite_url(id).await {
+            Ok(url) => {
+                return Ok(UrlResponse {
+                    id: url.id.to_string(),
+                    url: url.url,
+                    short_url: url.short_url,
+                    favourite: url.favourite,
                     deleted: false,
                     created_at: url.created_at.to_string(),
                 });

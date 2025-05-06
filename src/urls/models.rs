@@ -9,6 +9,7 @@ pub struct Url {
     pub user_id: Option<Uuid>,
     pub url: String,
     pub short_url: String,
+    pub favourite: bool,
     pub deleted: bool,
     pub created_at: NaiveDateTime,
 }
