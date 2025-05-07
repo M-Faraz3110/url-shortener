@@ -1,5 +1,6 @@
 use axum::{
     Json,
+    http::StatusCode,
     response::{IntoResponse, Response},
 };
 use serde::{Deserialize, Serialize};
@@ -9,7 +10,8 @@ pub struct ApiResponse<T>
 where
     T: Serialize,
 {
-    pub status: u16,
+    #[serde(with = "http_serde::status_code")]
+    pub status: StatusCode,
     pub data: Option<T>,
 }
 
@@ -17,14 +19,14 @@ impl<T> ApiResponse<T>
 where
     T: Serialize,
 {
-    pub fn success(data: T) -> Self {
+    pub fn success(status: StatusCode, data: T) -> Self {
         ApiResponse {
-            status: 200,
+            status: status,
             data: Some(data),
         }
     }
 
-    pub fn failure(status: u16, data: T) -> Self {
+    pub fn failure(status: StatusCode, data: T) -> Self {
         ApiResponse {
             status: status,
             data: Some(data),
@@ -34,6 +36,6 @@ where
 
 impl<T: Serialize> IntoResponse for ApiResponse<T> {
     fn into_response(self) -> Response {
-        axum::Json(self).into_response()
+        (self.status, axum::Json(self.data)).into_response()
     }
 }

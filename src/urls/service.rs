@@ -2,6 +2,7 @@ use std::sync::Arc;
 
 use axum::Error;
 use regex::Regex;
+use url::Url;
 use uuid::Uuid;
 
 use crate::{
@@ -35,11 +36,9 @@ impl UrlService {
     ) -> Result<UrlResponse, AppError> {
         //check for safety of the URL
         //<CODE>
-        let re = Regex::new(constants::URL_REGEX)
-            .map_err(|_| AppError::ValidationError("Regex Error".to_string()))?;
-        if !re.is_match(url) {
-            return Err(AppError::ValidationError("Invalid URL".to_string()));
-        }
+        let parsed = Url::parse(url)
+            .map_err(|_| AppError::ValidationError("URL Error".to_string()))?
+            .to_string();
 
         let user = self
             .user_repo
@@ -47,9 +46,9 @@ impl UrlService {
             .await
             .map_err(|_| AppError::NotFound("User not found".to_string()))?;
 
-        let hash = format!("{:x}", md5::compute(url));
+        let hash = format!("{:x}", md5::compute(parsed.clone()));
         let short_url = &hash[..8].to_string();
-        match self.url_repo.create(url, short_url, &user.id).await {
+        match self.url_repo.create(&parsed, short_url, &user.id).await {
             Ok(url) => {
                 return Ok(UrlResponse {
                     id: url.id.to_string(),
@@ -109,6 +108,26 @@ impl UrlService {
                     deleted: false,
                     created_at: url.created_at.to_string(),
                 });
+            }
+            Err(e) => Err(AppError::DatabaseError(e)),
+        }
+    }
+
+    pub async fn get_user_urls(&self, user_id: &String) -> Result<Vec<UrlResponse>, AppError> {
+        match self.url_repo.get_user_urls(user_id).await {
+            Ok(urls) => {
+                let mut url_responses = Vec::new();
+                for url in urls {
+                    url_responses.push(UrlResponse {
+                        id: url.id.to_string(),
+                        url: url.url,
+                        short_url: format!("{}/{}", self.prefix, url.short_url),
+                        favourite: url.favourite,
+                        deleted: false,
+                        created_at: url.created_at.to_string(),
+                    });
+                }
+                return Ok(url_responses);
             }
             Err(e) => Err(AppError::DatabaseError(e)),
         }

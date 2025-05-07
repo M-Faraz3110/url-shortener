@@ -103,4 +103,23 @@ impl UrlRepository for UrlRepo {
 
         Ok(url)
     }
+
+    async fn get_user_urls(&self, user_id: &String) -> Result<Vec<Url>, sqlx::Error> {
+        let uuid_id =
+            Uuid::parse_str(user_id).map_err(|_| sqlx::Error::Decode("Invalid UUID".into()))?;
+
+        let urls = sqlx::query_as!(
+            Url,
+            r#"
+            SELECT id, user_id, url, short_url, favourite, deleted, created_at
+            FROM urls
+            WHERE user_id = $1 AND deleted = false
+            "#,
+            uuid_id
+        )
+        .fetch_all(&self.db)
+        .await?;
+
+        Ok(urls)
+    }
 }

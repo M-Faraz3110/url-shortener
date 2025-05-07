@@ -56,7 +56,7 @@ impl UserService {
             let login_response = LoginResponse { token: token_resp };
             Ok(login_response)
         } else {
-            Err(AppError::ValidationError("Invalid credentials".to_string()))
+            return Err(AppError::ValidationError("Invalid credentials".to_string()));
         }
     }
 

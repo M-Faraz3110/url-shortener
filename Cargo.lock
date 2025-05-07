@@ -1003,6 +1003,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "http-serde"
+version = "2.1.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "0f056c8559e3757392c8d091e796416e4649d8e49e88b8d76df6c002f05027fd"
+dependencies = [
+ "http",
+ "serde",
+]
+
+[[package]]
 name = "httparse"
 version = "1.10.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2845,6 +2855,20 @@ dependencies = [
 ]
 
 [[package]]
+name = "tower-http"
+version = "0.6.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "403fa3b783d4b626a8ad51d766ab03cb6d2dbfc46b1c5d4448395e6628dc9697"
+dependencies = [
+ "bitflags 2.9.0",
+ "bytes",
+ "http",
+ "pin-project-lite",
+ "tower-layer",
+ "tower-service",
+]
+
+[[package]]
 name = "tower-layer"
 version = "0.3.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2965,6 +2989,7 @@ dependencies = [
  "base64 0.22.1",
  "chrono",
  "dotenv",
+ "http-serde",
  "jsonwebtoken",
  "md5",
  "mongodb",
@@ -2975,7 +3000,9 @@ dependencies = [
  "thiserror 2.0.12",
  "tokio",
  "tower",
+ "tower-http",
  "tracing",
+ "url",
  "utoipa",
  "utoipa-swagger-ui",
  "uuid",

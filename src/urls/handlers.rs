@@ -3,6 +3,7 @@ use crate::auth::models::Claims;
 use crate::common::response::ApiResponse;
 use crate::urls::dto::UrlResponse;
 use crate::{app_state::AppState, common::errors::AppError};
+use axum::http::StatusCode;
 use axum::response::Redirect;
 use axum::{
     Extension, Json,
@@ -31,7 +32,7 @@ pub async fn shorten_url(
         .url_service
         .shorten_url(&payload.url, &claims.user_id)
         .await?;
-    Ok(ApiResponse::success(url))
+    Ok(ApiResponse::success(StatusCode::OK, url))
     //
 }
 
@@ -47,7 +48,7 @@ pub async fn delete_url(
     Path(id): Path<String>,
 ) -> Result<impl IntoResponse, AppError> {
     let url = state.url_service.delete_url(&id).await?;
-    Ok(ApiResponse::success(url))
+    Ok(ApiResponse::success(StatusCode::OK, url))
 }
 
 #[utoipa::path(
@@ -76,5 +77,19 @@ pub async fn toggle_favourite_url(
     Path(id): Path<String>,
 ) -> Result<impl IntoResponse, AppError> {
     let url = state.url_service.favourite_url(&id).await?;
-    Ok(ApiResponse::success(url))
+    Ok(ApiResponse::success(StatusCode::OK, url))
+}
+
+#[utoipa::path(
+    get,
+    path = "/urls/user",
+    responses((status = 200, description = "user urls", body = Vec<UrlResponse>)),
+)]
+#[axum::debug_handler]
+pub async fn get_user_urls(
+    State(state): State<AppState>,
+    Extension(claims): Extension<Claims>,
+) -> Result<impl IntoResponse, AppError> {
+    let urls = state.url_service.get_user_urls(&claims.user_id).await?;
+    Ok(ApiResponse::success(StatusCode::OK, urls))
 }

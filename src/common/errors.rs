@@ -53,10 +53,7 @@ impl IntoResponse for AppError {
             AppError::InvalidToken => StatusCode::UNAUTHORIZED,
             AppError::TokenCreation => StatusCode::INTERNAL_SERVER_ERROR,
         };
-        let body = axum::Json(ApiResponse::<Option<String>>::failure(
-            status.as_u16(),
-            Some(self.to_string()),
-        ));
+        let body = ApiResponse::failure(status, self.to_string());
 
         (status, body).into_response()
     }
@@ -72,7 +69,7 @@ pub async fn handle_error(error: BoxError) -> impl IntoResponse {
     let message = error.to_string();
     error!(?status, %message, "Request failed");
 
-    let body = ApiResponse::<Option<String>>::failure(status.as_u16(), Some(message));
+    let body = ApiResponse::failure(status, message);
 
     (status, body)
 }

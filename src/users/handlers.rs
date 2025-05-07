@@ -1,4 +1,4 @@
-use axum::{Json, extract::State, response::IntoResponse};
+use axum::{Json, extract::State, http::StatusCode, response::IntoResponse};
 
 use crate::{
     app_state::AppState,
@@ -24,7 +24,7 @@ pub async fn login(
         .user_service
         .login(&payload.username, &payload.password)
         .await?;
-    Ok(ApiResponse::success(user))
+    Ok(ApiResponse::success(StatusCode::OK, user))
 }
 
 #[axum::debug_handler]
@@ -43,5 +43,5 @@ pub async fn register(
         .user_service
         .register(&payload.username, &payload.password)
         .await?;
-    Ok(ApiResponse::success(user)) //empty
+    Ok(ApiResponse::success(StatusCode::OK, user)) //empty
 }

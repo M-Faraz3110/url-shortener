@@ -13,11 +13,15 @@ use crate::{
 use utoipa_swagger_ui::SwaggerUi;
 
 pub fn create_router(config: &Config, state: AppState) -> Router {
-    let public_routes = Router::new().nest("/users", user_routes());
+    let cors = tower_http::cors::CorsLayer::permissive();
+    let public_routes = Router::new()
+        .nest("/users", user_routes())
+        .layer(cors.clone());
 
     let private_routes = Router::new()
         .merge(url_routes())
-        .route_layer(middleware::from_fn(jwt_auth));
+        .route_layer(middleware::from_fn(jwt_auth))
+        .layer(cors);
 
     Router::new()
         .merge(public_routes)
