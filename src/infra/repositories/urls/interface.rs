@@ -1,8 +1,9 @@
 use sqlx::{Pool, Postgres, Transaction};
 use uuid::Uuid;
 
-use super::{dto::UrlRequest, models::Url};
 use async_trait::async_trait;
+
+use crate::domains::urls::models::Url;
 
 #[async_trait]
 pub trait UrlRepository: Send + Sync {

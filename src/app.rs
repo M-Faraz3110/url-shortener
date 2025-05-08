@@ -4,11 +4,12 @@ use utoipa::OpenApi;
 
 use crate::{
     app_state::AppState,
-    auth,
     config::config::Config,
+    handlers::{
+        urls::{UrlApiDoc, url_routes},
+        users::{UserApiDoc, user_routes},
+    },
     middleware::jwt::jwt_auth,
-    urls::routes::{UrlApiDoc, url_routes},
-    users::routes::{UserApiDoc, user_routes},
 };
 use utoipa_swagger_ui::SwaggerUi;
 

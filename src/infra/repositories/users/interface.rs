@@ -1,6 +1,6 @@
 use async_trait::async_trait;
 
-use super::models::User;
+use crate::domains::users::models::User;
 
 #[async_trait]
 pub trait UserRepository: Send + Sync {

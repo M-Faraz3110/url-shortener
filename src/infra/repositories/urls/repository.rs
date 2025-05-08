@@ -2,7 +2,9 @@ use async_trait::async_trait;
 use sqlx::{Pool, Postgres, Transaction};
 use uuid::Uuid;
 
-use super::{dto::UrlRequest, interface::UrlRepository, models::Url};
+use crate::domains::urls::models::Url;
+
+use super::interface::UrlRepository;
 
 pub struct UrlRepo {
     db: Pool<Postgres>,

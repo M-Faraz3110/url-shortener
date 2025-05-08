@@ -8,10 +8,13 @@ use uuid::Uuid;
 use crate::{
     common::{constants, errors::AppError},
     config::config::Config,
-    users::{interface::UserRepository, repository::UsersRepo},
+    infra::repositories::{
+        urls::{interface::UrlRepository, repository::UrlRepo},
+        users::{interface::UserRepository, repository::UsersRepo},
+    },
 };
 
-use super::{dto::UrlResponse, interface::UrlRepository, repository::UrlRepo};
+use super::dto::UrlResponse;
 
 #[derive(Clone)]
 pub struct UrlService {
@@ -60,6 +63,7 @@ impl UrlService {
                 });
             }
             Err(e) => {
+                println!("{:?}", e);
                 return Err(AppError::DatabaseError(e));
             }
         }
@@ -109,7 +113,10 @@ impl UrlService {
                     created_at: url.created_at.to_string(),
                 });
             }
-            Err(e) => Err(AppError::DatabaseError(e)),
+            Err(e) => {
+                println!("{:?}", e);
+                Err(AppError::DatabaseError(e))
+            }
         }
     }
 

@@ -5,7 +5,7 @@ use axum::{
 };
 use jsonwebtoken::{DecodingKey, Validation, decode};
 
-use crate::{auth::models::Claims, common::errors::AppError, config::config::Config};
+use crate::{common::errors::AppError, config::config::Config, domains::auth::models::Claims};
 
 pub async fn jwt_auth<B>(mut req: Request<B>, next: Next) -> Result<Response, Response>
 where

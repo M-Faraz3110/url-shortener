@@ -3,10 +3,9 @@ use std::sync::Arc;
 use sqlx::{Pool, Postgres};
 
 use crate::{
-    auth::auth::Auth,
     config::config::Config,
-    urls::{repository::UrlRepo, service::UrlService},
-    users::{repository::UsersRepo, service::UserService},
+    domains::{auth::auth::Auth, urls::service::UrlService, users::service::UserService},
+    infra::repositories::{urls::repository::UrlRepo, users::repository::UsersRepo},
 };
 
 #[derive(Clone)]

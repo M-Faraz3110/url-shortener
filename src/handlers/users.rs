@@ -1,12 +1,11 @@
-use axum::{Json, extract::State, http::StatusCode, response::IntoResponse};
+use axum::{Json, Router, extract::State, http::StatusCode, response::IntoResponse, routing::post};
+use utoipa::OpenApi;
 
 use crate::{
     app_state::AppState,
     common::{errors::AppError, response::ApiResponse},
-    users::dto::LoginResponse,
+    domains::users::dto::{LoginRequest, LoginResponse, Register},
 };
-
-use super::dto::{LoginRequest, Register};
 
 #[axum::debug_handler]
 #[utoipa::path(
@@ -44,4 +43,27 @@ pub async fn register(
         .register(&payload.username, &payload.password)
         .await?;
     Ok(ApiResponse::success(StatusCode::OK, user)) //empty
+}
+
+#[derive(OpenApi)]
+#[openapi(
+    paths(register, login),
+    components(schemas(Register, LoginResponse, LoginRequest)),
+    tags(
+        (name = "Users", description = "Operations related to users")
+    ),
+    modifiers(&UserApiDoc)
+)]
+pub struct UserApiDoc;
+
+impl utoipa::Modify for UserApiDoc {
+    fn modify(&self, openapi: &mut utoipa::openapi::OpenApi) {
+        let components = openapi.components.as_mut().unwrap();
+    }
+}
+
+pub fn user_routes() -> Router<AppState> {
+    Router::new()
+        .route("/register", post(register))
+        .route("/login", post(login))
 }

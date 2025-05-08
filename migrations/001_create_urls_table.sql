@@ -5,9 +5,7 @@ CREATE TABLE urls
     url TEXT NOT NULL,
     short_url TEXT NOT NULL,
     deleted BOOLEAN NOT NULL DEFAULT FALSE,
-    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
-
-    UNIQUE (user_id, url)
+    created_at TIMESTAMP NOT NULL DEFAULT NOW()
 );
 
 CREATE INDEX idx_urls_urls ON urls (url);

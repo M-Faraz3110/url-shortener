@@ -1,7 +1,9 @@
 use async_trait::async_trait;
 use sqlx::{Pool, Postgres};
 
-use super::{interface::UserRepository, models::User};
+use crate::domains::users::models::User;
+
+use super::interface::UserRepository;
 
 pub struct UsersRepo {
     db: Pool<Postgres>,

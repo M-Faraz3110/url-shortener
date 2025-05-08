@@ -7,13 +7,12 @@ use tracing::info;
 
 mod app;
 mod app_state;
-mod auth;
 mod common;
 mod config;
+mod domains;
+mod handlers;
 mod infra;
 mod middleware;
-mod urls;
-mod users;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {

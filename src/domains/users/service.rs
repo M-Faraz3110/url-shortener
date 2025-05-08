@@ -6,9 +6,13 @@ use argon2::{
 };
 use chrono::DateTime;
 
-use crate::{auth::auth::Auth, common::errors::AppError};
+use crate::{
+    common::errors::AppError,
+    domains::auth::auth::Auth,
+    infra::repositories::users::{interface::UserRepository, repository::UsersRepo},
+};
 
-use super::{dto::LoginResponse, interface::UserRepository, repository::UsersRepo};
+use super::dto::LoginResponse;
 
 #[derive(Clone)]
 pub struct UserService {
