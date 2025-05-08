@@ -1,7 +1,7 @@
 use super::dto::UrlRequest;
 use crate::auth::models::Claims;
 use crate::common::response::ApiResponse;
-use crate::urls::dto::UrlResponse;
+use crate::urls::dto::{FavouriteUrl, UrlResponse};
 use crate::{app_state::AppState, common::errors::AppError};
 use axum::http::StatusCode;
 use axum::response::Redirect;
@@ -66,17 +66,21 @@ pub async fn enter_url(
 }
 
 #[utoipa::path(
-    post,
+    patch,
     path = "/urls/favourite/{id}",
     responses((status = 200, description = "url favourited", body = UrlResponse)),
 )]
 #[axum::debug_handler]
-pub async fn toggle_favourite_url(
+pub async fn favourite_url(
     State(state): State<AppState>,
     Extension(claims): Extension<Claims>,
     Path(id): Path<String>,
+    Json(payload): Json<FavouriteUrl>,
 ) -> Result<impl IntoResponse, AppError> {
-    let url = state.url_service.favourite_url(&id).await?;
+    let url = state
+        .url_service
+        .favourite_url(&id, &payload.favourite)
+        .await?;
     Ok(ApiResponse::success(StatusCode::OK, url))
 }
 

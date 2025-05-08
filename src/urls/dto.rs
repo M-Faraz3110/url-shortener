@@ -16,3 +16,8 @@ pub struct UrlResponse {
     pub deleted: bool,
     pub created_at: String,
 }
+
+#[derive(Serialize, Deserialize, Debug, ToSchema)]
+pub struct FavouriteUrl {
+    pub favourite: bool,
+}

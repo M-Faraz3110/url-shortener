@@ -82,7 +82,7 @@ impl UrlRepository for UrlRepo {
         Ok(url)
     }
 
-    async fn favourite_url(&self, id: &String) -> Result<Url, sqlx::Error> {
+    async fn favourite_url(&self, id: &String, state: &bool) -> Result<Url, sqlx::Error> {
         let mut tx = self.db.begin().await?;
         let uuid_id =
             Uuid::parse_str(id).map_err(|_| sqlx::Error::Decode("Invalid UUID".into()))?;
@@ -91,11 +91,12 @@ impl UrlRepository for UrlRepo {
             Url,
             r#"
             UPDATE urls
-            SET favourite = NOT favourite
+            SET favourite = $2
             WHERE id = $1
             RETURNING id, user_id, url, short_url, favourite, deleted, created_at
             "#,
             uuid_id,
+            state,
         )
         .fetch_one(&mut *tx)
         .await?;

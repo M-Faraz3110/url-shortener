@@ -97,8 +97,8 @@ impl UrlService {
         }
     }
 
-    pub async fn favourite_url(&self, id: &String) -> Result<UrlResponse, AppError> {
-        match self.url_repo.favourite_url(id).await {
+    pub async fn favourite_url(&self, id: &String, state: &bool) -> Result<UrlResponse, AppError> {
+        match self.url_repo.favourite_url(id, state).await {
             Ok(url) => {
                 return Ok(UrlResponse {
                     id: url.id.to_string(),

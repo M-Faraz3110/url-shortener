@@ -13,7 +13,7 @@ use crate::urls::handlers::{delete_url, shorten_url};
 
 #[derive(OpenApi)]
 #[openapi(
-    paths(handlers::shorten_url, handlers::delete_url, handlers::enter_url, handlers::toggle_favourite_url, handlers::get_user_urls),
+    paths(handlers::shorten_url, handlers::delete_url, handlers::enter_url, handlers::favourite_url, handlers::get_user_urls),
     components(schemas(UrlRequest, UrlResponse)),
     tags(
         (name = "URLs", description = "Operations related to URL shortening")
@@ -55,7 +55,7 @@ pub fn url_routes() -> Router<AppState> {
         .route("/urls/shorten", post(handlers::shorten_url))
         .route("/urls/delete/{id}", delete(handlers::delete_url))
         .route("/{code}", get(handlers::enter_url))
-        .route("/urls/favourite/{id}", post(handlers::toggle_favourite_url))
+        .route("/urls/favourite/{id}", post(handlers::favourite_url))
         .route("/urls/user", get(get_user_urls))
         .layer(cors)
 }
