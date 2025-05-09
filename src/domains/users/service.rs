@@ -5,6 +5,7 @@ use argon2::{
     password_hash::{PasswordHash, PasswordHasher, PasswordVerifier, SaltString, rand_core::OsRng},
 };
 use chrono::DateTime;
+use regex::Regex;
 
 use crate::{
     common::errors::AppError,
@@ -36,6 +37,12 @@ impl UserService {
         if username.is_empty() || password.is_empty() {
             return Err(AppError::ValidationError(
                 "Username and password cannot be empty".to_string(),
+            ));
+        }
+
+        if !(Self::validate_username(username) && Self::validate_password(password)) {
+            return Err(AppError::ValidationError(
+                "Username and password are not formatted correctly".to_string(),
             ));
         }
 
@@ -71,6 +78,12 @@ impl UserService {
             ));
         }
 
+        if !(Self::validate_username(username) && Self::validate_password(password)) {
+            return Err(AppError::ValidationError(
+                "Username and password are not formatted correctly".to_string(),
+            ));
+        }
+
         let salt = SaltString::generate(&mut OsRng);
         let argon2 = Argon2::default();
         let password_hash = argon2
@@ -81,5 +94,14 @@ impl UserService {
             Ok(_) => Ok(()),
             Err(e) => Err(AppError::DatabaseError(e)),
         }
+    }
+
+    pub fn validate_username(username: &String) -> bool {
+        let rgx = Regex::new(r"^[a-zA-Z0-9_.-]{3,32}$").unwrap();
+        return rgx.is_match(username);
+    }
+
+    fn validate_password(password: &String) -> bool {
+        return password.len() >= 8 && password.len() <= 64;
     }
 }

@@ -5,7 +5,7 @@ use axum::{
 };
 
 use serde::{Deserialize, Serialize};
-use sqlx::Error as SqlxError;
+use sqlx::{Error as SqlxError, error::DatabaseError};
 use thiserror::Error;
 use tracing::error;
 
@@ -42,11 +42,40 @@ impl From<argon2::password_hash::Error> for AppError {
     }
 }
 
+// impl From<SqlxError> for AppError {
+//     fn from(err: SqlxError) -> Self {
+//         match err.as_database_error() {
+//             Some(er) => {
+//                 if er.is_unique_violation() {
+//                     return AppError::AlreadyExistsError(err);
+//                 }
+//                 return AppError::DatabaseError(err);
+//             }
+//             None => {
+//                 return AppError::InternalError;
+//             }
+//         };
+//     }
+// }
+
 impl IntoResponse for AppError {
     fn into_response(self) -> Response {
-        let status = match self {
+        let err = &self;
+        let status = match err {
             AppError::ValidationError(_) => StatusCode::BAD_REQUEST,
-            AppError::DatabaseError(_) => StatusCode::INTERNAL_SERVER_ERROR,
+            AppError::DatabaseError(err) => {
+                let sql_err = err.as_database_error();
+                match sql_err {
+                    Some(er) => {
+                        if er.is_unique_violation() {
+                            StatusCode::CONFLICT
+                        } else {
+                            StatusCode::INTERNAL_SERVER_ERROR
+                        }
+                    }
+                    None => StatusCode::INTERNAL_SERVER_ERROR,
+                }
+            }
             AppError::PasswordHashingError(_) => StatusCode::INTERNAL_SERVER_ERROR,
             AppError::NotFound(_) => StatusCode::NOT_FOUND,
             AppError::InternalError => StatusCode::INTERNAL_SERVER_ERROR,
