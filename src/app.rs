@@ -6,6 +6,7 @@ use crate::{
     app_state::AppState,
     config::config::Config,
     handlers::{
+        health::{HealthApiDoc, health_route},
         urls::{UrlApiDoc, url_routes},
         users::{UserApiDoc, user_routes},
     },
@@ -17,6 +18,7 @@ pub fn create_router(config: &Config, state: AppState) -> Router {
     let cors = tower_http::cors::CorsLayer::permissive();
     let public_routes = Router::new()
         .nest("/users", user_routes())
+        .nest("/health", health_route())
         .layer(cors.clone());
 
     let private_routes = Router::new()
@@ -41,4 +43,5 @@ pub fn create_swagger_ui() -> SwaggerUi {
     SwaggerUi::new("/swagger-ui")
         .url("/api-docs/urls/openapi.json", UrlApiDoc::openapi())
         .url("/api-docs/users/openapi.json", UserApiDoc::openapi())
+        .url("/api-docs/health/openapi.json", HealthApiDoc::openapi())
 }
