@@ -4,6 +4,7 @@ RUN apt-get update && apt-get install -y pkg-config libssl-dev
 
 WORKDIR /app
 COPY . .
+COPY .sqlx .sqlx
 
 RUN cargo build --release
 
